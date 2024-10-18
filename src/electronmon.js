@@ -20,6 +20,7 @@ module.exports = ({
   patterns = []
 } = {}) => {
   const executable = electronPath || require('electron');
+  const log = logger(stdio[1], logLevel);
   log.info(`electronPath ${electronPath}`);
   log.info(`cwd ${cwd}`);
   log.info(`patterns ${patterns}`);
@@ -31,7 +32,6 @@ module.exports = ({
     { ELECTRONMON_LOGLEVEL: logLevel },
     env
   );
-  const log = logger(stdio[1], logLevel);
 
   const appfiles = {};
   let globalWatcher;
