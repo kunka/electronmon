@@ -48,6 +48,7 @@ module.exports = ({
 
   function onMessage({ type, file }) {
     if (type === 'discover') {
+      file = file.replace(new RegExp('\\' + path.sep, 'g'), '/');
       appfiles[file] = true;
       log.info(`appfiles found ${Object.values(appfiles).length}, ${file}`);
     } else if (type === 'uncaught-exception') {
@@ -171,6 +172,9 @@ module.exports = ({
       watcher.on('change', ({ path: fullpath }) => {
         const relpath = path.relative(cwd, fullpath);
         const filepath = path.resolve(cwd, relpath);
+        filepath = filepath.replace(new RegExp('\\' + path.sep, 'g'), '/');
+        relpath = relpath.replace(new RegExp('\\' + path.sep, 'g'), '/');
+
         const type = 'change';
 
         if (overrideSignal === ERRORED) {
