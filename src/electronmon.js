@@ -20,6 +20,9 @@ module.exports = ({
   patterns = []
 } = {}) => {
   const executable = electronPath || require('electron');
+  log.info(`electronPath ${electronPath}`);
+  log.info(`cwd ${cwd}`);
+  log.info(`patterns ${patterns}`);
 
   const isTTY = stdio[1].isTTY;
   const getEnv = (env) => Object.assign(
@@ -46,6 +49,7 @@ module.exports = ({
   function onMessage({ type, file }) {
     if (type === 'discover') {
       appfiles[file] = true;
+      log.info(`appfiles found ${Object.values(appfiles).length}, ${file}`);
     } else if (type === 'uncaught-exception') {
       log.info('uncaught exception occured');
       log.info('waiting for any change to restart the app');
