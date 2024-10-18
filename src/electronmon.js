@@ -53,7 +53,7 @@ module.exports = ({
     if (type === 'discover') {
       file = file.replaceAll(path.sep, "/");
       appfiles[file] = true;
-      log.info(`appfiles found ${Object.values(appfiles).length}, ${file}`);
+    //   log.info(`appfiles found ${Object.values(appfiles).length}, ${file}`);
     } else if (type === 'uncaught-exception') {
       log.info('uncaught exception occured');
       log.info('waiting for any change to restart the app');
