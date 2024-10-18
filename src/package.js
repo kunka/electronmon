@@ -13,7 +13,8 @@ module.exports = (() => {
   const pkg = read();
 
   pkg.electronmon = Object.assign({
-    patterns: []
+    patterns: [],
+    files: []
   }, pkg.electronmon);
 
   return pkg;

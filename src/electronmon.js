@@ -17,13 +17,15 @@ module.exports = ({
   logLevel = 'info',
   electronPath,
   stdio = [process.stdin, process.stdout, process.stderr],
-  patterns = []
+  patterns = [],
+  files = []
 } = {}) => {
   const executable = electronPath || require('electron');
   const log = logger(stdio[1], logLevel);
   log.info(`electronPath ${electronPath}`);
   log.info(`cwd ${cwd}`);
   log.info(`patterns ${patterns}`);
+  log.info(`files ${files}`);
 
   const isTTY = stdio[1].isTTY;
   const getEnv = (env) => Object.assign(
@@ -38,6 +40,7 @@ module.exports = ({
   let globalApp;
   let overrideSignal;
 
+
   function onTerm() {
     if (globalApp) {
       globalApp.kill('SIGINT');
@@ -48,7 +51,7 @@ module.exports = ({
 
   function onMessage({ type, file }) {
     if (type === 'discover') {
-      file = file.replace(new RegExp('\\' + path.sep, 'g'), '/');
+      file = file.replaceAll(path.sep, "/");
       appfiles[file] = true;
       log.info(`appfiles found ${Object.values(appfiles).length}, ${file}`);
     } else if (type === 'uncaught-exception') {
@@ -57,6 +60,10 @@ module.exports = ({
       overrideSignal = ERRORED;
     }
   }
+
+  files.forEach(file=>{
+    onMessage({type:'discover', file:path.join(cwd, file)});
+  });
 
   function startApp() {
     return new Promise((resolve) => {
@@ -170,10 +177,10 @@ module.exports = ({
       globalWatcher = watcher;
 
       watcher.on('change', ({ path: fullpath }) => {
-        const relpath = path.relative(cwd, fullpath);
-        const filepath = path.resolve(cwd, relpath);
-        filepath = filepath.replace(new RegExp('\\' + path.sep, 'g'), '/');
-        relpath = relpath.replace(new RegExp('\\' + path.sep, 'g'), '/');
+        let relpath = path.relative(cwd, fullpath);
+        let filepath = path.resolve(cwd, relpath);
+        filepath = filepath.replaceAll(path.sep, "/");
+        relpath = relpath.replaceAll(path.sep, "/");
 
         const type = 'change';
 
